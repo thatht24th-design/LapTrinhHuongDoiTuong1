@@ -1,4 +1,5 @@
-#Phát biểu bài toán
+# Phát biểu bài toán
+***
 Tại công ty điều hành cung ứng xe, cần xây dựng phần mềm quản lý phương tiện giao thông, tại công ty có các loại xe và thông tin:
 * Xe máy: Số hiệu, năm sản xuất, giá bán, dung tích xi lanh
 * Ô tô: Số hiệu, năm sản xuất, giá bán, số chỗ ngồi
