@@ -12,7 +12,7 @@ Tại công ty điều hành cung ứng xe, cần xây dựng phần mềm quả
 4.	Lưu danh sách phương tiện ra tập tin
 5.	Đọc danh sách phương tiện từ tập tin
 ---
-## Buôi 11
+## Buổi 11
 ### Phát biểu bài toán
 Viết chương trình QUẢN LÝ KÝ TÚC XÁ, với các thông tin sau:
 * PHÒNG: Mã phòng, tên phòng, đơn giá, dung lượng
