@@ -1,9 +1,143 @@
 
 #include <iostream>
+#include <vector>
+#include <fstream>
 using namespace std;
+
+
+void writeString(ofstream& ofs, const string& str) {
+    size_t len = str.length();
+    ofs.write(reinterpret_cast<const char*> (&len), sizeof(len));
+    ofs.write(str.c_str(), len);
+}
+string readString(ifstream& ifs) {
+    size_t len;
+    ifs.read(reinterpret_cast<char*> (&len), sizeof(len));
+    if (!ifs.good()) {
+        return "";
+    }
+    string str(len, '\0');
+    ifs.read(&str[0], len);
+    return str;
+}
+class NgayThangNam {
+    int ngay, thang, nam;
+};
+class Phong {
+    int maphong, dungluong;
+    string tenphong;
+    double dongia;
+public:
+    Phong(){}
+    Phong(int a) {
+        maphong = a;
+    }
+    int MaPhong() {
+        return maphong;
+    }
+    void nhap() {
+        cout << "THONG TIN PHONG:" << endl;
+        cout << "\t+ Ma phong: ";
+        cin >> maphong;
+        cout << "\t+ Ten phong: ";
+        cin >> tenphong;
+        cout << "\t+ Don gia: ";
+        cin >> dongia;
+        cout << "\t+ Dung luong: ";
+        cin >> dungluong;
+    }
+    void xuat() {
+        cout << maphong << "\t\t" << tenphong << "\t\t" << dongia << "\t" << dungluong << endl;
+    }
+    void ghiTapTin(ofstream& ofs) {
+        ofs.write(reinterpret_cast<const char*> (&maphong), sizeof(maphong));
+        writeString(ofs, tenphong);
+        ofs.write(reinterpret_cast<const char*> (&dongia), sizeof(dongia));
+        ofs.write(reinterpret_cast<const char*> (&dungluong), sizeof(dungluong));
+    }
+    void docTapTin(ifstream& ifs) {
+        tenphong = readString(ifs);
+        ifs.read(reinterpret_cast<char*>(&dongia), sizeof(dongia));
+        ifs.read(reinterpret_cast<char*>(&dungluong), sizeof(dungluong));
+    }
+};
+class SinhVien {
+    int masv;
+    string hoten;
+    NgayThangNam ngayvao;
+    Phong phong;
+};
+class HoaDon {
+    int mahd;
+    Phong phong;
+    NgayThangNam ngaylap;
+};
+
+class QLKTX {
+    vector<Phong> dsPhong;  
+    vector<SinhVien> dsSinhVien;
+    vector<HoaDon> dsHoaDon;
+public:
+    void themPhong(Phong p) {
+        dsPhong.push_back(p);
+        cout << "Them phong thanh cong !!" << endl;
+    }
+    void xemPhong() {
+        cout << "DANH SACH PHONG: " << endl;
+        cout << "Ma phong\tTen phong\tDon gia\tDung luong" << endl;
+        for (Phong p : dsPhong) {
+            p.xuat();
+        }
+    }
+    void xoaPhong(int ms) {
+        int vt = 0;
+        for (Phong p : dsPhong) {
+            if (p.MaPhong() == ms) {
+                dsPhong.erase(dsPhong.begin() + vt);
+                cout << "Xoa phong thanh cong !!" << endl;
+                return;
+            }
+            vt++;
+        }
+        cout << "Khong tim thay phong can xoa" << endl;
+    }
+    void ghiPhong() {
+        ofstream ofs("phong.dla", ios::binary);
+        if (!ofs) {
+            cout << "Loi: Khong mo duoc tap tin de ghi" << endl;
+            return;
+        }
+        for (Phong p : dsPhong) {
+            p.ghiTapTin(ofs);
+        }
+        ofs.close();
+        cout << "Ghi du lieu thanh cong !!" << endl;
+    }
+    void docPhong() {
+        ifstream ifs("phong.dla", ios::binary);
+        if (!ifs) {
+            cout << "Loi: Khong mo duoc file de doc" << endl;
+            return;
+        }
+        dsPhong.clear();       
+        while (true) {
+            int maphong;
+            ifs.read(reinterpret_cast<char*>(&maphong), sizeof(maphong));
+            if (ifs.eof()) {
+                break;
+            }
+            Phong p(maphong);            
+            p.docTapTin(ifs);
+            dsPhong.push_back(p);
+        }
+        ifs.close();
+        cout << "Doc tap tin thanh cong !!" << endl;
+    }
+};
 
 void main()
 {
+    QLKTX ql;
     do {
         system("cls");
         cout << "---- QUAN LY KY TUC XA ----" << endl;
@@ -38,18 +172,28 @@ void main()
                 {
                 case 1:
                 {
+                    Phong p;
+                    p.nhap();
+                    ql.themPhong(p);
                     break;
                 }
                 case 2: {
+                    ql.xemPhong();
                     break;
                 }
                 case 3: {
+                    cout << "Nhap ma phong can xoa: ";
+                    int mp;
+                    cin >> mp;
+                    ql.xoaPhong(mp);
                     break;
                 }
                 case 4: {
+                    ql.ghiPhong();
                     break;
                 }
                 case 5: {
+                    ql.docPhong();
                     break;
                 }
                 default:
